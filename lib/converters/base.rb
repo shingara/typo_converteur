@@ -1,3 +1,18 @@
+class EmailNotifier < ActiveRecord::Observer
+  observe Article, Comment
+  
+  def after_save(content)
+    true
+  end
+end
+
+class WebNotifier < ActiveRecord::Observer
+  observe Article
+
+  def after_save(article)
+  end
+end
+
 class BaseConverter
   @@new_user_password = 'typomigrator'
   cattr_accessor :new_user_password
