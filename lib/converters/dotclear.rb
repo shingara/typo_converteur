@@ -53,7 +53,7 @@ class DotclearConverter < BaseConverter
                                            :include => :categorie, 
                                            :conditions => ["post_pub = 1 AND cat_libelle IN (?)", @options[:categories]])
     else
-      @old_articles ||= Dotclear::Post.find_all_by_post_pub true
+      @old_article ||= Dotclear::Post.find_all_by_post_pub true
     end
     @old_article
   end

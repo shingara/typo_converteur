@@ -137,14 +137,15 @@ class BaseConverter
   def create_article(other_article, &block)
     (article, *categories) = block.call(other_article)
     if article
-      article.blog        = blog
-      article.user      ||= default_user
-      article.text_filter ||= filter
+      article.allow_comments = true
+      article.allow_pings    = false
+      article.published      = true
+      article.user           ||= default_user
+      article.text_filter    ||= filter
       article.save!
       print '.'
       categories.each_with_index do |c, i|
-        article.categories.push_with_attributes(c) unless i == 0
-        article.categories.push_with_attributes(c, :is_primary => 1) if i == 0
+        article.categories << c
       end
       @article_index[other_article] = article
       @count[:articles] += 1
