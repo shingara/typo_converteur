@@ -1,0 +1,29 @@
+TypoConverters
+==================
+
+This Plugins is a new system for converting the database of another blog in Typo
+blog database.
+
+This system is base on Mephisto converter. It's a plugin and he
+use completly ActiveRecord. For retrieve the information on other blog and
+post in typo.
+
+Now, the converter works only with Dotclear, but an interface is write and
+you can use it with another Blog engine to create another adapter.
+
+To start the migration with dotclear, you need complete the
+config/database.yml with an configurations with dc key and all information on
+where find the database with SQLDump of your blog engine. After this
+configuration you can start the migration with the follow commande line :
+
+./script/runner 'TypoPlugins.convert_from :dotclear'
+
+By default all articles migrated, but you can migrate only articles with
+specifiques categories.
+
+./script/runner "TypoPlugins.convert_from :dotclear, {:categorie => ['ruby', 'rails', 'dev']}"
+
+Advice : To accelerate the migration you can comment in
+config/environnement.rb the line of Observer :
+
+#config.active_record.observers = :email_notifier, :web_notifier
