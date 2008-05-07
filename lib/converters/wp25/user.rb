@@ -1,8 +1,12 @@
-module WP25
+module WordPress
   class User < ActiveRecord::Base
     set_table_name 'wp_users'
     set_primary_key 'ID'
-    establish_connection configurations['wp2.5']
-    has_many :posts, :foreign_key => 'post_author', :class_name => 'WP25::Post'
+    establish_connection configurations['wp']
+    has_many :posts, :foreign_key => 'post_author', :class_name => 'WordPress::Post'
+    
+    def self.prefix(prefix)
+      set_table "#{prefix}_users"
+    end
   end
 end

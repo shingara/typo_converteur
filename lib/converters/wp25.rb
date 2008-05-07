@@ -1,6 +1,8 @@
 require 'converters/wp25/post'
 require 'converters/wp25/comment'
-require 'converters/wp25/category'
+require 'converters/wp25/term'
+require 'converters/wp25/term_relationship'
+require 'converters/wp25/term_taxonomy'
 require 'converters/wp25/user'
 
 class Wp25Converter < BaseConverter
@@ -8,6 +10,7 @@ class Wp25Converter < BaseConverter
     converter = new(options)
     converter.import_users do |wp_user|
       ::User.new \
+        :name => wp_user.display_name,
         :email => wp_user.user_email || "#{wp_user.user_login}@notfound.com",
         :login => wp_user.user_login,
         :password => new_user_password,
@@ -18,7 +21,9 @@ class Wp25Converter < BaseConverter
       unless wp_article.post_content.blank? || wp_article.post_title.blank?
         user = wp_article.post_author.nil? ? nil : converter.users[WP25::User.find(wp_article.post_author.to_i).ID]
         
-        body = wp_article.post_content
+        excerpt, body = !wp_article.post_excerpt.blank? ?
+          [wp_article.post_excerpt, wp_article.post_content] :
+          [nil, wp_article.post_content]
 
         
         a = ::Article.new \
@@ -90,12 +95,22 @@ class Wp25Converter < BaseConverter
     @sections[libelle]
   end
 
-  def find_or_create_categories(dc_article)
+  def find_or_create_categories(wp_article)
     #TODO : understand the categories with WP
     #cat = dc_article.categorie
     #create_categories(cat.cat_libelle) if categories[cat.cat_libelle].nil?
     #categories[cat.cat_libelle]
     #TODO : return empty for security during the TODO
-    []
+    home_categories = categories['']
+    wp_article.categories.inject([home_categories.id]) do |memo, cat|
+      existing = Category.find_by_name(cat)
+      if (existing)
+        memo << existing.id
+      else
+        new = this_blog.sections.create(:name => cat)
+        new.save!
+        memo << new.id
+      end
+    end
   end
 end
