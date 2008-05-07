@@ -6,6 +6,12 @@ require 'converters/wp25/user'
 class Wp25Converter < BaseConverter
   def self.convert(options = {})
     converter = new(options)
+    
+    unless (options[:prefix].nil?)
+      WP25::Post.prefix = options[:prefix]
+      WP25::Comment.prefix = options[:prefix]
+      WP25::User.prefix = options[:prefix]
+    end
     converter.import_users do |wp_user|
       ::User.new \
         :email => wp_user.user_email || "#{wp_user.user_login}@notfound.com",
