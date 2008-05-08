@@ -41,7 +41,8 @@ class Wp25Converter < BaseConverter
           :created_at   => wp_article.post_date,
           :published_at => wp_article.post_date,
           :updated_at   => wp_article.post_modified,
-          :author       => user
+          :author       => user,
+          :tags         => converter.find_or_create_tags(wp_article.tags)
         [a, converter.find_or_create_categories(wp_article)]
       end
     end
@@ -105,7 +106,6 @@ class Wp25Converter < BaseConverter
   end
 
   def find_or_create_categories(wp_article)
-    #TODO : understand the categories with WP
     wp_categories = wp_article.categories
     categories_post = []
     wp_categories.each { |wp_categorie|
@@ -113,5 +113,16 @@ class Wp25Converter < BaseConverter
       categories_post << categories[wp_categorie]
     }
     categories_post
+  end
+
+  # with the tags'libelle in params search or
+  # create the Tag objet in Typo
+  def find_or_create_tags(wp_tags)
+    tags_post = []
+    wp_tags.each { |tag|
+      create_tag(tag) if tags[tag].nil?
+      tags_post << tags[tag]
+    }
+    tags_post
   end
 end

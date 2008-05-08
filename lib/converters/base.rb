@@ -116,9 +116,14 @@ class BaseConverter
     @default_user
   end
 
-  # Returns all the sections from the current Typo site, in a hash indexed by the section name.
+  # Returns all Category, in a hash indexed by the category name.
   def categories
     @categories ||= ::Category.find(:all).index_by(&:name)
+  end
+
+  # Returns all Tag in a hash indexed by the tag name
+  def tags
+    @tags ||= ::Tag.find(:all).index_by(&:name)
   end
 
   def import_users(&block)
@@ -152,6 +157,7 @@ class BaseConverter
   def create_article(other_article, &block)
     (article, *categories) = block.call(other_article)
     if article
+      tags = Array.new(article.tags)
       article.allow_comments = true
       article.allow_pings    = false
       article.published      = true
@@ -162,6 +168,10 @@ class BaseConverter
       categories.each_with_index do |c, i|
         article.categories << c
       end
+      tags.each { |tag|
+        tag.articles << article
+        tag.save!
+      }
       @article_index[other_article] = article
       @count[:articles] += 1
     end
@@ -206,6 +216,12 @@ class BaseConverter
 
   def create_categories(libelle)
     @categories[libelle] = Category.find_or_create_by_name libelle 
+  end
+
+  # Create a tag with a libelle
+  # Add the tag in Hash value in attribute of tags
+  def create_tag(libelle)
+    @tags[libelle] = Tag.get libelle 
   end
   
   def import_articles(&block)
