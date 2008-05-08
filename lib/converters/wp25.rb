@@ -13,6 +13,9 @@ class Wp25Converter < BaseConverter
       WP25::Post.prefix = options[:prefix]
       WP25::Comment.prefix = options[:prefix]
       WP25::User.prefix = options[:prefix]
+      WP25::Term.prefix = options[:prefix]
+      WP25::TermRelationship.prefix = options[:prefix]
+      WP25::TermTaxonomy.prefix = options[:prefix]
     end
     converter.import_users do |wp_user|
       ::User.new \
@@ -103,20 +106,12 @@ class Wp25Converter < BaseConverter
 
   def find_or_create_categories(wp_article)
     #TODO : understand the categories with WP
-    #cat = dc_article.categorie
-    #create_categories(cat.cat_libelle) if categories[cat.cat_libelle].nil?
-    #categories[cat.cat_libelle]
-    #TODO : return empty for security during the TODO
-    home_categories = categories['']
-    wp_article.categories.inject([home_categories.id]) do |memo, cat|
-      existing = Category.find_by_name(cat)
-      if (existing)
-        memo << existing.id
-      else
-        new = this_blog.sections.create(:name => cat)
-        new.save!
-        memo << new.id
-      end
-    end
+    wp_categories = wp_article.categories
+    categories_post = []
+    wp_categories.each { |wp_categorie|
+      create_categories(wp_categorie) if categories[wp_categorie].nil?
+      categories_post << categories[wp_categorie]
+    }
+    categories_post
   end
 end
