@@ -65,7 +65,7 @@ class Wp25Converter < BaseConverter
       #TODO: understand the categories configuration
       @old_article ||= WP25::Post.find(:all, 
                                            :include => :categorie, 
-                                           :conditions => ["post_pub = 1 AND cat_libelle IN (?)", @options[:categories]])
+                                           :conditions => ["post_pub = ? AND cat_libelle IN (?)", true, @options[:categories]])
     else
       @old_article ||= WP25::Post.find_all_by_post_status 'publish'
     end
