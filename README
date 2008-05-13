@@ -29,7 +29,7 @@ configuration you can start the migration with the follow command line :
 By default all articles migrated, but you can migrate only articles with
 specifiques categories.
 
-./script/runner "TypoPlugins.convert_from :dotclear, {:categorie => ['ruby', 'rails', 'dev']}"
+./script/runner "TypoPlugins.convert_from :dotclear, :categories => ['ruby', 'rails', 'dev']"
 
 Migration for a WordPress 2.5.x database
 =======================================
@@ -59,4 +59,4 @@ configuration you can start the migration with the follow command line :
 By default all articles migrated, but you can migrate only articles with
 specifiques categories.
 
-./script/runner "TypoPlugins.convert_from :dotclear_2, {:categorie => ['ruby', 'rails', 'dev']}"
+./script/runner "TypoPlugins.convert_from :dotclear_2, :categories => ['ruby', 'rails', 'dev']"
