@@ -7,6 +7,15 @@ require 'converters/dotclear_2/tag'
 class Dotclear2Converter < BaseConverter
   def self.convert(options = {})
     converter = new(options)
+    
+    unless (options[:prefix].nil?)
+      Dotclear2::Post.prefix = options[:prefix]
+      Dotclear2::Comment.prefix = options[:prefix]
+      Dotclear2::User.prefix = options[:prefix]
+      Dotclear2::Tag.prefix = options[:prefix]
+      Dotclear2::Category.prefix = options[:prefix]
+    end
+    
     converter.import_users do |dc_user|
       ::User.new \
         :name => dc_user.user_displayname,

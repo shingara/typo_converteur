@@ -60,3 +60,12 @@ By default all articles migrated, but you can migrate only articles with
 specifiques categories.
 
 ./script/runner "TypoPlugins.convert_from :dotclear_2, :categories => ['ruby', 'rails', 'dev']"
+
+By default the prefix's name is 'dc' but you can change it with option :prefix
+like :
+
+./script/runner "TypoPlugins.convert_from :dotclear_2, :prefix => 'sunny'"
+
+This 2 options are too in same action :
+
+./script/runner "TypoPlugins.convert_from :dotclear_2, :prefix => 'sunny', :categories => ['ruby', 'rails', 'dev']"
